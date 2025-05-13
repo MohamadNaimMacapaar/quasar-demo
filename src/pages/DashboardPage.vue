@@ -4,7 +4,3 @@
     <p>Welcome to the Dashboard page.</p>
   </div>
 </template>
-
-<script setup>
-//
-</script>
