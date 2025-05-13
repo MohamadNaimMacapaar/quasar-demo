@@ -4,10 +4,10 @@
     <div class="row q-col-gutter-md q-mb-lg">
       <div class="col">
         <q-btn
-          class="full-width"
-          color="white"
-          text-color="primary"
-          unelevated
+          class="full-width category-btn"
+          :outline="selectedCategory !== 'cs'"
+          :color="selectedCategory === 'cs' ? 'primary' : 'primary'"
+          :text-color="selectedCategory === 'cs' ? 'white' : 'primary'"
           :class="selectedCategory === 'cs' ? 'category-active' : ''"
           @click="selectedCategory = 'cs'"
         >
@@ -16,10 +16,10 @@
       </div>
       <div class="col">
         <q-btn
-          class="full-width"
-          color="white"
-          text-color="primary"
-          unelevated
+          class="full-width category-btn"
+          :outline="selectedCategory !== 'it'"
+          :color="selectedCategory === 'it' ? 'primary' : 'primary'"
+          :text-color="selectedCategory === 'it' ? 'white' : 'primary'"
           :class="selectedCategory === 'it' ? 'category-active' : ''"
           @click="selectedCategory = 'it'"
         >
@@ -28,10 +28,10 @@
       </div>
       <div class="col">
         <q-btn
-          class="full-width"
-          color="white"
-          text-color="primary"
-          unelevated
+          class="full-width category-btn"
+          :outline="selectedCategory !== 'is'"
+          :color="selectedCategory === 'is' ? 'primary' : 'primary'"
+          :text-color="selectedCategory === 'is' ? 'white' : 'primary'"
           :class="selectedCategory === 'is' ? 'category-active' : ''"
           @click="selectedCategory = 'is'"
         >
@@ -116,11 +116,18 @@ function statusClass(status) {
 </script>
 
 <style scoped>
-.category-active {
-  background: #e6edfa !important;
-  color: #222 !important;
-  font-weight: bold;
+.category-btn {
   border-radius: 16px;
+  font-weight: bold;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.category-active {
+  background: #1976d2 !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px #1976d233;
+  border: 1.5px solid #1976d2 !important;
 }
 .thesis-card {
   border-radius: 16px;
