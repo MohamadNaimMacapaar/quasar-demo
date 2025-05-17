@@ -69,6 +69,19 @@
       </div>
     </div>
 
+    <!-- Category Selector Section -->
+    <div class="text-h6 text-bold q-mb-sm" style="color: #2d3a4a">Category</div>
+    <q-select
+      v-model="selectedCategory"
+      :options="categoryOptions"
+      outlined
+      dense
+      class="q-mb-lg"
+      label="Select category"
+      emit-value
+      map-options
+    />
+
     <!-- Title Section -->
     <div class="text-h6 text-bold q-mb-sm" style="color: #2d3a4a">Title</div>
     <div class="row items-center q-mb-lg">
@@ -129,6 +142,14 @@ const groupMembers = ref([
 
 const title = ref('')
 const description = ref('')
+const selectedCategory = ref('')
+
+// Category options for the selector
+const categoryOptions = [
+  { label: 'Computer Science', value: 'cs' },
+  { label: 'Information Technology', value: 'it' },
+  { label: 'Information Security', value: 'is' },
+]
 
 function addMember() {
   groupMembers.value.push({
@@ -182,6 +203,7 @@ async function submitThesis() {
   if (selectedFile.value) {
     formData.append('file', selectedFile.value)
   }
+  formData.append('category', selectedCategory.value) // <-- Append category to formData
 
   try {
     await axios.post('http://localhost:8000/upload', formData, {

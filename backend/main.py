@@ -33,20 +33,21 @@ async def upload_file(
     file: UploadFile = File(...),
     title: str = Form(...),
     description: str = Form(...),
-    groupMembers: str = Form(...)
+    groupMembers: str = Form(...),
+    category: str = Form(...)  # <-- add this
 ):
-    # Parse groupMembers JSON string
     import json
     group_members = json.loads(groupMembers)
-    # Save file or process as needed
     contents = await file.read()
-    # Example: Save thesis info to MongoDB
     doc = {
         "title": title,
         "description": description,
         "groupMembers": group_members,
         "filename": file.filename,
-        # You can save file contents or path if you want
+        "category": category,  # <-- save category
+        "approval": "Pending", # default value
+        "status": "In Progress", # default value
+        # "color": "#ffe6ea", # optional, for card color
     }
     collection.insert_one(doc)
     return {"message": "Upload successful"}
