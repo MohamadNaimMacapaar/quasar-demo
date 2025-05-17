@@ -120,23 +120,15 @@ const selectedFile = ref(null)
 
 const groupMembers = ref([
   {
-    name: 'Abdul GGs',
-    year: '2021-2022',
-    id: '202356735',
-    department: 'Computer Science',
-  },
-  {
-    name: 'Mjolnir Rizz',
-    year: '2021-2022',
-    id: '202356735',
-    department: 'Computer Science',
+    name: '',
+    year: '',
+    id: '',
+    department: '',
   },
 ])
 
-const title = ref('CICS Thesis Archive Frontend')
-const description = ref(
-  `Hello World! This is a sample description for the thesis. It can be as long as you want it to be, and it will automatically grow as you type.`,
-)
+const title = ref('')
+const description = ref('')
 
 function addMember() {
   groupMembers.value.push({
@@ -192,7 +184,7 @@ async function submitThesis() {
   }
 
   try {
-    await axios.post('http://localhost:8000/thesis', formData, {
+    await axios.post('http://localhost:8000/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     alert('Thesis submitted successfully!')

@@ -76,48 +76,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 
 const selectedCategory = ref('cs')
-
-const theses = [
-  {
-    category: 'cs',
-    title: 'Test Bank System',
-    approval: 'Approved',
-    status: 'In Progress',
-    color: '#ffe6ea',
-  },
-  {
-    category: 'cs',
-    title: 'Feeding Management System',
-    approval: 'Pending',
-    status: 'N/A',
-    color: '#fff6e0',
-  },
-  {
-    category: 'cs',
-    title: 'UI payment Queuing System',
-    approval: 'Rejected',
-    status: 'N/A',
-    color: '#ffe6ea',
-  },
-  {
-    category: 'it',
-    title: 'IT System',
-    approval: 'Rejected',
-    status: 'N/A',
-    color: '#ffe6ea',
-  },
-  {
-    category: 'is',
-    title: 'IS System',
-    approval: 'Rejected',
-    status: 'N/A',
-    color: '#ffe6ea',
-  },
-  // Add IT and IS theses here if needed
-]
+const theses = ref([])
 
 const categoryTitle = computed(() => {
   switch (selectedCategory.value) {
@@ -132,7 +95,9 @@ const categoryTitle = computed(() => {
   }
 })
 
-const filteredTheses = computed(() => theses.filter((t) => t.category === selectedCategory.value))
+const filteredTheses = computed(() =>
+  theses.value.filter((t) => t.category === selectedCategory.value),
+)
 
 function approvalClass(status) {
   if (status === 'Approved') return 'text-primary'
@@ -145,6 +110,16 @@ function statusClass(status) {
   if (status === 'In Progress') return 'text-primary'
   return 'text-grey'
 }
+
+// Fetch theses from backend on mount
+onMounted(async () => {
+  try {
+    const res = await axios.get('http://localhost:8000/theses')
+    theses.value = res.data
+  } catch (err) {
+    console.error('Failed to fetch theses:', err)
+  }
+})
 </script>
 
 <style scoped>

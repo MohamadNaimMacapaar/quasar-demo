@@ -78,29 +78,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 
 const selectedCategory = ref('cs')
+const theses = ref([])
 
-const theses = [
-  {
-    category: 'cs',
-    title: 'Lending Management system',
-    approval: 'Pending',
-    status: 'N/A',
-    color: '#fff6e0',
-  },
-  {
-    category: 'cs',
-    title: 'Online Scoring System',
-    approval: 'Pending',
-    status: 'N/A',
-    color: '#fff6e0',
-  },
-  // Add more theses for IT and IS as needed
-]
-
-const filteredTheses = computed(() => theses.filter((t) => t.category === selectedCategory.value))
+const filteredTheses = computed(() =>
+  theses.value.filter((t) => t.category === selectedCategory.value),
+)
 
 function approvalClass(status) {
   if (status === 'Approved') return 'text-primary'
@@ -113,6 +99,16 @@ function statusClass(status) {
   if (status === 'In Progress') return 'text-primary'
   return 'text-grey'
 }
+
+// Fetch theses from backend on mount
+onMounted(async () => {
+  try {
+    const res = await axios.get('http://localhost:8000/theses')
+    theses.value = res.data
+  } catch (err) {
+    console.error('Failed to fetch theses:', err)
+  }
+})
 </script>
 
 <style scoped>
