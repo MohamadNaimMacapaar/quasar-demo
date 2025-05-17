@@ -6,20 +6,60 @@
       <div class="col-3" v-for="(member, idx) in groupMembers" :key="idx">
         <q-card flat bordered class="member-card">
           <q-card-section>
-            <div class="text-caption text-grey-7">Name</div>
-            <div class="text-subtitle1 text-weight-medium">{{ member.name }}</div>
+            <div class="row items-center">
+              <div class="col">
+                <div class="text-caption text-grey-7">Name</div>
+              </div>
+              <div class="col-auto">
+                <q-btn
+                  dense
+                  flat
+                  round
+                  icon="delete"
+                  color="negative"
+                  @click="removeMember(idx)"
+                  v-if="groupMembers.length > 1"
+                />
+              </div>
+            </div>
+            <q-input
+              v-model="member.name"
+              dense
+              outlined
+              placeholder="Enter name"
+              class="q-mb-sm"
+            />
             <div class="row q-mt-xs">
               <div class="col">
                 <div class="text-caption text-grey-7">Year Level</div>
-                <div class="text-body2">{{ member.year }}</div>
+                <q-input
+                  v-model="member.year"
+                  dense
+                  outlined
+                  placeholder="Enter year"
+                  class="q-mb-sm"
+                />
               </div>
               <div class="col">
                 <div class="text-caption text-grey-7">ID no.</div>
-                <div class="text-body2">{{ member.id }}</div>
+                <q-input
+                  v-model="member.id"
+                  dense
+                  outlined
+                  placeholder="Enter ID"
+                  class="q-mb-sm"
+                />
               </div>
             </div>
             <div class="q-mt-md text-caption text-grey-7">
-              Department: <span class="text-weight-medium">{{ member.department }}</span>
+              Department:
+              <q-input
+                v-model="member.department"
+                dense
+                outlined
+                placeholder="Enter department"
+                class="q-mt-xs"
+              />
             </div>
           </q-card-section>
         </q-card>
@@ -47,8 +87,9 @@
           class="upload-btn"
           label="Upload File"
           icon="cloud_upload"
-          @click="uploadFile"
+          @click="triggerFileInput"
         />
+        <input type="file" ref="fileInput" class="hidden" @change="onFileChange" />
       </div>
     </div>
 
@@ -62,11 +103,20 @@
       class="desc-input"
       placeholder="Enter thesis description"
     />
+
+    <!-- Submit Section -->
+    <div class="q-mt-lg">
+      <q-btn color="primary" class="submit-btn" label="Submit Thesis" @click="submitThesis" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
+
+const fileInput = ref(null)
+const selectedFile = ref(null)
 
 const groupMembers = ref([
   {
@@ -97,9 +147,59 @@ function addMember() {
   })
 }
 
-function uploadFile() {
-  // Implement file upload logic here
-  alert('Upload File clicked!')
+function removeMember(index) {
+  if (groupMembers.value.length > 1) {
+    groupMembers.value.splice(index, 1)
+  }
+}
+
+function triggerFileInput() {
+  fileInput.value.click()
+}
+
+function onFileChange(event) {
+  selectedFile.value = event.target.files[0]
+  uploadFile()
+}
+
+async function uploadFile() {
+  if (!selectedFile.value) {
+    alert('Please select a file to upload.')
+    return
+  }
+  const formData = new FormData()
+  formData.append('file', selectedFile.value)
+
+  try {
+    await axios.post('http://localhost:8000/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    alert('Upload success!')
+    // handle response as needed
+  } catch (err) {
+    alert('Upload failed!')
+    console.error(err)
+  }
+}
+
+async function submitThesis() {
+  const formData = new FormData()
+  formData.append('title', title.value)
+  formData.append('description', description.value)
+  formData.append('groupMembers', JSON.stringify(groupMembers.value))
+  if (selectedFile.value) {
+    formData.append('file', selectedFile.value)
+  }
+
+  try {
+    await axios.post('http://localhost:8000/thesis', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    alert('Thesis submitted successfully!')
+  } catch (err) {
+    alert('Submission failed!')
+    console.error(err)
+  }
 }
 </script>
 
@@ -130,5 +230,8 @@ function uploadFile() {
   border-radius: 16px;
   background: #fff;
   font-size: 1rem;
+}
+.hidden {
+  display: none;
 }
 </style>
